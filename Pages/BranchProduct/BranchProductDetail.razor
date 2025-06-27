@@ -1,0 +1,72 @@
+﻿
+@page "/branchproduct/{IdProduct}"
+@using MenShopUI.Services.BranchProduct
+@using MenShopUI.DTOs.BranchProduct
+@inject IBranchProductService branchProductService
+<div class="d-flex justify-content-between my-2">
+    <h3>Chi tiết sản phẩm</h3>
+    <a href="/branchproducts" class="btn" Color="ButtonColor.Danger" Outline="true">
+        <Icon Name="IconName.ArrowLeftCircle" /> Quay lại
+    </a>
+</div>
+<div class="mt-4">
+    <div class="d-flex m-2">
+        @foreach (var item in selectedBranchProduct)
+        {
+                
+        <Card Class="m-3 shadow rounded-3" Style="width: 20rem;">
+            <Carousel Class="rounded-top">
+                <CarouselItem Active="true">
+                    <Image Src="@item.Image" />
+                </CarouselItem>
+                <CarouselItem>
+                    <Image Src="@item.Image" />
+                </CarouselItem>
+                <CarouselItem>
+                    <Image Src="@item.Image" />
+                </CarouselItem>
+            </Carousel>
+
+            <CardBody Class="bg-light">
+                <CardTitle Class="fw-bold text-dark">@item.ProductName</CardTitle>
+
+                <div class="d-flex justify-content-between my-2">
+                    <CardText>
+                        <span class="fw-semibold text-primary">Giá:</span> @item.Price
+                    </CardText>
+                    <CardText>
+                        <span class="fw-semibold text-success">Còn:</span> @item.Quantity
+                    </CardText>
+                </div>
+
+                <CardText>
+                    <span class="fw-semibold">Màu:</span> @item.ColorName
+                </CardText>
+                <CardText>
+                    <span class="fw-semibold">Kích cỡ:</span> @item.SizeName
+                </CardText>
+                <CardText>
+                    <span class="fw-semibold">Chất liệu:</span> @item.FabricName
+                </CardText>
+            </CardBody>
+        </Card>
+
+                
+        }
+    </div>
+</div>
+@code {
+    private List<BranchProductDetailDto> selectedBranchProduct = new();
+    private string? branchId = "1";
+    [Parameter]
+    public string? IdProduct { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+       
+        selectedBranchProduct = await branchProductService.GetBranchProductDetail(
+            branchId,
+            IdProduct
+        );
+        
+    }
+}

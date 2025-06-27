@@ -1,0 +1,45 @@
+﻿@page "/branchproducts"
+@using MenShopUI.DTOs.BranchProduct
+@using MenShopUI.Services.BranchProduct
+@inject IBranchProductService branchProductService
+@inject NavigationManager Navigation
+
+<h3>BranchProduct</h3>
+
+<Grid TItem="BranchProductDto"
+      Class="table table-hover table-bordered table-striped shadow rounded"
+      Data="@branchProductDtos"
+      AllowPaging="true"
+      PageSize="5"
+      AllowRowClick="true"
+      AllowSorting="true"
+      AllowFiltering="true"
+      SelectionMode="GridSelectionMode.Single"
+      OnRowClick="OnRowClick"
+      Responsive="true">
+
+    <GridColumns>
+        <GridColumn TItem="BranchProductDto" HeaderText="Mã sản phẩm" PropertyName="ProductId" SortKeySelector="item => item.ProductId">@context.ProductId</GridColumn>
+        <GridColumn TItem="BranchProductDto" HeaderText="Tên sản phẩm" PropertyName="ProductName" SortKeySelector="item => item.ProductName">@context.ProductName</GridColumn>
+        <GridColumn TItem="BranchProductDto" HeaderText="Mô tả" Filterable="false">@context.Description</GridColumn>
+        <GridColumn TItem="BranchProductDto" HeaderText="Ảnh" Filterable="false" width="40%">
+            <img src="@context.Image" width="100px" alt="@context.ProductName" />
+        </GridColumn>
+    </GridColumns>
+</Grid>
+
+@code {
+    private List<BranchProductDto> branchProductDtos = new();
+    private string? branchId = "1";
+
+    protected override async Task OnInitializedAsync()
+    {
+        branchProductDtos = await branchProductService.GetBranchProduct(branchId);
+    }
+
+    private void OnRowClick(GridRowEventArgs<BranchProductDto> args)
+    {
+        var productId = args.Item.ProductId;
+        Navigation.NavigateTo($"/branchproduct/{productId}");
+    }
+}

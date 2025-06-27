@@ -1,0 +1,78 @@
+﻿@page "/colorcreate"
+@using MenShopUI.DTOs.Color
+@using MenShopUI.Services.Color
+@inject IColorService colorService
+@inject NavigationManager NavigationManager
+<h3>ColorCreate</h3>
+<div class="mt-4">
+    <h5>Thêm màu mới</h5>
+    <div class="input-group mb-2" style="max-width: 400px;">
+        <input class="form-control" placeholder="Tên màu" @bind="newColor.Name" />
+        <button class="btn btn-primary" @onclick="AddColor"><Icon Name="IconName.PlusSquare" /></button>
+    </div>
+</div>
+<div class="mt-4 mb-3">
+    <button class="btn btn-danger" @onclick="NavigateToColorList">
+        <Icon Name="IconName.Backspace" /> Quay lại
+    </button>
+</div>
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+@code {
+    private string? successMessage;
+    private string? errorMessage;
+    private ColorDto newColor = new();
+    private async Task AddColor()
+    {
+        if (!string.IsNullOrWhiteSpace(newColor.Name))
+        {
+            try
+            {
+                await colorService.AddColor(newColor);
+                newColor = new ColorDto(); // Reset
+                await ShowMessage("✅ Thêm màu thành công!", true);
+
+            }
+            catch (Exception ex)
+            {
+                await ShowMessage($"❌ Lỗi khi thêm màu: {ex.Message}", false);
+            }
+        }
+        else
+        {
+            await ShowMessage("❌ Vui lòng nhập tên màu!", false);
+        }
+    }
+
+    private async Task ShowMessage(string message, bool isSuccess)
+    {
+        if (isSuccess)
+        {
+            successMessage = message;
+            errorMessage = null;
+        }
+        else
+        {
+            errorMessage = message;
+            successMessage = null;
+        }
+
+        StateHasChanged();
+        await Task.Delay(3000);
+
+        successMessage = null;
+        errorMessage = null;
+        StateHasChanged();
+    }
+
+    private void NavigateToColorList()
+    {
+        NavigationManager.NavigateTo("/colorsview");
+    }
+}

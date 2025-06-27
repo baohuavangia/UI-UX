@@ -1,0 +1,238 @@
+﻿@page "/sizesview"
+@using MenShopUI.DTOs.Size
+@using MenShopUI.Services.Size
+@inject ISizeService sizeService
+@inject NavigationManager NavigationManager
+
+<h3 class="mb-3 text-center">Danh sách kích cỡ</h3>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<div class="mt-4 mb-3">
+    <button class="btn btn-primary" @onclick="StartCreate">
+        <Icon Name="IconName.PlusSquare" /> Thêm kích cỡ
+    </button>
+</div>
+
+<Grid TItem="SizeDto"
+      Class="table table-hover table-bordered"
+      Data="@fabrics"
+      AllowFiltering="true"
+      AllowSorting="true"
+      AllowPaging="true"
+      PageItemsSource="pageItems"
+      PageItems="10"
+      FixedHeader="true"
+      Responsive="true"
+      Unit="Unit.Px"
+      ShowToolbar="true">
+
+    <GridColumns>
+        <GridColumn TItem="SizeDto" HeaderText="ID" PropertyName="ColorId"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.SizeId
+        </GridColumn>
+        <GridColumn TItem="SizeDto" HeaderText="Tên kích cỡ" PropertyName="Name"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.Name
+        </GridColumn>
+        <GridColumn TItem="SizeDto" HeaderText="Hành động"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            <button class="btn btn-warning btn-sm me-1" @onclick="() => StartEdit(context.SizeId, context.Name)">
+                <Icon Name="IconName.PencilSquare" /> Edit
+            </button>
+            <button class="btn btn-danger btn-sm" @onclick="() => Delete(context.SizeId)">
+                <Icon Name="IconName.Trash" /> Delete
+            </button>
+        </GridColumn>
+    </GridColumns>
+</Grid>
+
+@if (showEditModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chỉnh sửa kích cỡ</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên kích cỡ</label>
+                        <input class="form-control" @bind="editColorName" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseModal">Hủy</button>
+                    <button class="btn btn-primary" @onclick="() => SaveUpdate(editingColorId.Value)">Lưu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (showCreateModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Thêm kích cỡ</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên màu</label>
+                        <input class="form-control" @bind="newFabric.Name" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseModal">Hủy</button>
+                    <button class="btn btn-primary" @onclick="AddFabric"><Icon Name="IconName.PlusSquare" /> Thêm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    private List<SizeDto> fabrics = new();
+    private SizeDto newFabric = new();
+    private string? successMessage;
+    private string? errorMessage;
+
+    private int? editingColorId = null;
+    private string editColorName = "";
+    private bool showEditModal = false;
+    private bool showCreateModal = false;
+
+    private List<int> pageItems = new() { 5, 10, 20 };
+
+    protected override async Task OnInitializedAsync()
+    {
+        fabrics = await sizeService.GetSizeAsync();
+    }
+
+    private void StartEdit(int colorId, string currentName)
+    {
+        editingColorId = colorId;
+        editColorName = currentName;
+        showEditModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showEditModal = false;
+        editingColorId = null;
+        editColorName = "";
+        showCreateModal = false;
+    }
+
+    private void StartCreate()
+    {
+        showCreateModal = true;
+    }
+
+    private async Task AddFabric()
+    {
+        if (!string.IsNullOrWhiteSpace(newFabric.Name))
+        {
+            try
+            {
+                await sizeService.AddSize(newFabric);
+                newFabric = new SizeDto(); // Reset
+                CloseModal();
+                await ShowMessage("✅ Thêm màu thành công!", true);
+            }
+            catch (Exception ex)
+            {
+                await ShowMessage($"❌ Lỗi khi thêm màu: {ex.Message}", false);
+            }
+        }
+        else
+        {
+            await ShowMessage("❌ Vui lòng nhập tên màu!", false);
+        }
+        fabrics = await sizeService.GetSizeAsync();
+    }
+
+    private async Task SaveUpdate(int colorId)
+    {
+        if (!string.IsNullOrWhiteSpace(editColorName))
+        {
+            try
+            {
+                var colorToUpdate = new SizeDto
+                {
+                    SizeId = colorId,
+                    Name = editColorName.Trim()
+                };
+
+                await sizeService.UpdateSize(colorToUpdate);
+                fabrics = await sizeService.GetSizeAsync();
+
+                showEditModal = false;
+                editingColorId = null;
+                editColorName = "";
+
+                await ShowMessage("✅ Cập nhật màu thành công!", true);
+            }
+            catch (Exception ex)
+            {
+                await ShowMessage($"❌ Lỗi không thể cập nhật màu: {ex.Message}", false);
+            }
+        }
+        else
+        {
+            await ShowMessage("❌ Tên màu không được để trống!", false);
+        }
+    }
+
+    private async Task Delete(int Id)
+    {
+        try
+        {
+            await sizeService.DeleteSize(Id);
+            fabrics = await sizeService.GetSizeAsync();
+            await ShowMessage("✅ Xóa màu thành công!", true);
+        }
+        catch (Exception)
+        {
+            await ShowMessage($"❌ Lỗi không thể xóa màu", false);
+        }
+    }
+
+    private async Task ShowMessage(string message, bool isSuccess)
+    {
+        if (isSuccess)
+        {
+            successMessage = message;
+            errorMessage = null;
+        }
+        else
+        {
+            errorMessage = message;
+            successMessage = null;
+        }
+
+        StateHasChanged();
+        await Task.Delay(3000);
+        successMessage = null;
+        errorMessage = null;
+        StateHasChanged();
+    }
+
+    private void NavigateToColorCreate()
+    {
+        NavigationManager.NavigateTo("colorcreate");
+    }
+}
