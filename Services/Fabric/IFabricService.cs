@@ -5,9 +5,9 @@ namespace MenShopUI.Services.Fabric
 {
     public interface IFabricService
     {
-        public Task<List<FabricDto>> GetFabricDtos();
-        public Task AddFabric(FabricDto fabricDto);
-        public Task UpdateFabric(FabricDto fabricDto);
+        public Task<List<FabricModel>> GetFabricDtos();
+        public Task AddFabric(FabricModel fabricDto);
+        public Task UpdateFabric(FabricModel fabricDto);
 
         public Task<bool> DeleteFabric(int Id);
     }

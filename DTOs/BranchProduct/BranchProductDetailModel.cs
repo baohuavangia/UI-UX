@@ -1,6 +1,6 @@
 ﻿namespace MenShopUI.DTOs.BranchProduct
 {
-    public class BranchProductDetailDto
+    public class BranchProductDetailModel
     {
         public string? ProductName { get; set; }
         public string? Image { get; set; }

@@ -21,7 +21,7 @@
     </button>
 </div>
 
-<Grid TItem="ColorDto"
+<Grid TItem="ColorModel"
       Class="table table-hover table-bordered"
       Data="@colors"
       AllowFiltering="true"
@@ -35,15 +35,15 @@
       ShowToolbar="true">
 
     <GridColumns>
-        <GridColumn TItem="ColorDto" HeaderText="ID" PropertyName="ColorId"
+        <GridColumn TItem="ColorModel" HeaderText="ID" PropertyName="ColorId"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             @context.ColorId
         </GridColumn>
-        <GridColumn TItem="ColorDto" HeaderText="Tên màu" PropertyName="Name"
+        <GridColumn TItem="ColorModel" HeaderText="Tên màu" PropertyName="Name"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             @context.Name
         </GridColumn>
-        <GridColumn TItem="ColorDto" HeaderText="Hành động"
+        <GridColumn TItem="ColorModel" HeaderText="Hành động"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             <button class="btn btn-warning btn-sm me-1" @onclick="() => StartEdit(context.ColorId, context.Name)">
                 <Icon Name="IconName.PencilSquare" /> Edit
@@ -105,8 +105,8 @@
 
 
 @code {
-    private List<ColorDto> colors = new();
-    private ColorDto newColor = new();
+    private List<ColorModel> colors = new();
+    private ColorModel newColor = new();
     private string? successMessage;
     private string? errorMessage;
 
@@ -149,7 +149,7 @@
             try
             {
                 await ColorService.AddColor(newColor);
-                newColor = new ColorDto(); // Reset
+                newColor = new ColorModel(); // Reset
                 CloseModal();
                 await ShowMessage("✅ Thêm màu thành công!", true);
             }
@@ -171,7 +171,7 @@
         {
             try
             {
-                var colorToUpdate = new ColorDto
+                var colorToUpdate = new ColorModel
                 {
                     ColorId = colorId,
                     Name = editColorName.Trim()

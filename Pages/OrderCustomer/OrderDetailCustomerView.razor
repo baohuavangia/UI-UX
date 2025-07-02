@@ -1,0 +1,112 @@
+﻿@page "/orderDetailView/{orderId}"
+@using MenShopUI.DTOs.OrderCustomer
+@using MenShopUI.DTOs.ProductDetail
+@using MenShopUI.Services.OrderCustomer
+@inject IOrderCustomerService orderCustomerService
+<h3>OrderDetailCustomerView</h3>
+<div class="d-flex justify-content-between my-2">
+    <h3>Chi tiết sản phẩm</h3>
+    <a href="/branchproducts" class="btn" Color="ButtonColor.Danger" Outline="true">
+        <Icon Name="IconName.ArrowLeftCircle" /> Quay lại
+    </a>
+</div>
+@if (order?.Details != null && order.Details.Any())
+{
+    <Grid TItem="ProductDetailViewModel"
+          Class="table table-hover table-bordered"
+          Data="@order.Details"
+          AllowFiltering="true"
+          AllowSorting="true"
+          AllowPaging="true"
+          PageItems="10"
+          FixedHeader="true"
+          Responsive="true"
+          Unit="Unit.Px"
+          ShowToolbar="true">
+
+        <GridColumns>
+            <GridColumn TItem="ProductDetailViewModel" HeaderText="Mã chi tiết" PropertyName="DetailId"
+                        HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+                @context.DetailId
+            </GridColumn>
+
+            <GridColumn TItem="ProductDetailViewModel" HeaderText="Tên sản phẩm" PropertyName="ProductName"
+                        HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+                @context.ProductName
+            </GridColumn>
+
+            <GridColumn TItem="ProductDetailViewModel" HeaderText="Kích cỡ" PropertyName="SizeName"
+                        HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+                @context.SizeName
+            </GridColumn>
+
+            <GridColumn TItem="ProductDetailViewModel" HeaderText="Màu sắc" PropertyName="ColorName"
+                        HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+                @context.ColorName
+            </GridColumn>
+
+            <GridColumn TItem="ProductDetailViewModel" HeaderText="Chất liệu" PropertyName="FabricName"
+                        HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+                @context.FabricName
+            </GridColumn>
+
+            <GridColumn TItem="ProductDetailViewModel" HeaderText="Giá bán" PropertyName="SellPrice"
+                        HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+                @context.SellPrice
+            </GridColumn>
+
+            <GridColumn TItem="ProductDetailViewModel" HeaderText="Số lượng" PropertyName="Quantity"
+                        HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+                @context.Quantity
+            </GridColumn>
+
+            <GridColumn TItem="ProductDetailViewModel" HeaderText="Hình ảnh" TextAlignment="Alignment.Center">
+                @if (context.Images != null && context.Images.Any())
+                {
+                    <div id="carousel-@context.DetailId" class="carousel slide" data-bs-ride="carousel" style="width: 200px;">
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < context.Images.Count; i++)
+                            {
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <img src="@context.Images[i]" class="d-block w-100" style="max-height: 200px;" alt="Ảnh sản phẩm" />
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@context.DetailId" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carousel-@context.DetailId" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <span>Không có hình ảnh.</span>
+                }
+            </GridColumn>
+        </GridColumns>
+    </Grid>
+
+}
+else
+{
+    <p>Đang tải dữ liệu hoặc không có sản phẩm nào.</p>
+}
+<div>
+
+
+    <img src="https://localhost:7094/StaticFiles/Images/1.jpg" alt="Ảnh sản phẩm" style="max-height:200px; max-width:100%;" />
+                            
+        
+</div>
+
+@code {
+    private OrderCustomerModel order = new();
+    [Parameter]
+    public string? orderId { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        order = await orderCustomerService.GetOrderCustomerDetailsAsync(orderId);
+    }
+}

@@ -14,14 +14,14 @@ namespace MenShopUI.Services.Fabric
             _httpClient = httpClient;
         }
 
-        public async Task<List<FabricDto>> GetFabricDtos()
+        public async Task<List<FabricModel>> GetFabricDtos()
         {
-            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<FabricDto>>>($"{ApiUrl.BaseUrl}api/fabric");
+            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<FabricModel>>>($"{ApiUrl.BaseUrl}api/fabric");
 
-            return response?.Data ?? new List<FabricDto>();
+            return response?.Data ?? new List<FabricModel>();
         }
 
-        public async Task AddFabric(FabricDto fabricDto)
+        public async Task AddFabric(FabricModel fabricDto)
         {
             var response = await _httpClient.PostAsJsonAsync($"{ApiUrl.BaseUrl}api/fabric", fabricDto);
 
@@ -32,7 +32,7 @@ namespace MenShopUI.Services.Fabric
             }
         }
 
-        public async Task UpdateFabric(FabricDto fabricDto)
+        public async Task UpdateFabric(FabricModel fabricDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"{ApiUrl.BaseUrl}api/fabric/{fabricDto.FabricId}", fabricDto);
 

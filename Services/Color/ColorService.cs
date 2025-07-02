@@ -17,19 +17,19 @@ namespace MenShopUI.Services.Color
             _httpClient = httpClient;
         }
 
-        public async Task<List<ColorDto>> GetColorDtos()
+        public async Task<List<ColorModel>> GetColorDtos()
         {
-            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<ColorDto>>>($"{ApiUrl.BaseUrl}api/color");
-            return response?.Data ?? new List<ColorDto>();
+            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<ColorModel>>>($"{ApiUrl.BaseUrl}api/color");
+            return response?.Data ?? new List<ColorModel>();
         }
 
-        public async Task<ColorDto> GetColorId(int id)
+        public async Task<ColorModel> GetColorId(int id)
         {
-            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<ColorDto>>($"{ApiUrl.BaseUrl}api/color/{id}");
-            return response?.Data ?? new ColorDto();
+            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<ColorModel>>($"{ApiUrl.BaseUrl}api/color/{id}");
+            return response?.Data ?? new ColorModel();
         }
 
-        public async Task AddColor(ColorDto colorDto)
+        public async Task AddColor(ColorModel colorDto)
         {
             var response = await _httpClient.PostAsJsonAsync($"{ApiUrl.BaseUrl}api/color", colorDto);
 
@@ -40,7 +40,7 @@ namespace MenShopUI.Services.Color
             }
         }
 
-        public async Task UpdateColor(ColorDto colorDto)
+        public async Task UpdateColor(ColorModel colorDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"{ApiUrl.BaseUrl}api/color/{colorDto.ColorId}", colorDto);
 

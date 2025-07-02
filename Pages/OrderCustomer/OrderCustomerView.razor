@@ -1,0 +1,133 @@
+﻿@page "/ordercustomerview"
+@using MenShopUI.Services.OrderCustomer
+@using MenShopUI.DTOs.OrderCustomer
+@inject IOrderCustomerService orderCustomerService
+@inject NavigationManager Navigation
+<h3>OrderCustomerView</h3>
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+<Grid TItem="OrderCustomerModel"
+      Class="table table-hover table-bordered"
+      Data="@orderCustomerModel"
+      AllowFiltering="true"
+      AllowSorting="true"
+      AllowPaging="true"
+      AllowRowClick="true"
+      PageItemsSource="pageItems"
+      PageItems="10"
+      FixedHeader="true"
+      OnRowClick="OnRowClick"
+      Responsive="true"
+      Unit="Unit.Px"
+      ShowToolbar="true">
+
+    <GridColumns>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Mã đơn hàng" PropertyName="OrderId"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.OrderId
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Khách hàng" PropertyName="CustomerName"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.CustomerName
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Nhân viên" PropertyName="EmployeeName"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.EmployeeName
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Người giao hàng" PropertyName="ShipperName"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.ShipperName
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Ngày tạo" PropertyName="CreatedDate"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.CreatedDate
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Ngày hoàn thành" PropertyName="CompletedDate"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.CompletedDate
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Ngày thanh toán" PropertyName="PaidDate"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.PaidDate
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Trạng thái" PropertyName="Status"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.Status
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Mua online?" PropertyName="IsOnline"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.IsOnline
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Tổng tiền" PropertyName="Total"
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            @context.Total
+        </GridColumn>
+        <GridColumn TItem="OrderCustomerModel" HeaderText="Thao tác" PropertyName=""
+                    HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
+            <button class="btn btn-danger btn-sm"
+                    @onclick="() => Cancel(context.OrderId)"
+                    @onclick:stopPropagation>
+                <Icon Name="IconName.Trash" /> Delete
+            </button>
+        </GridColumn>
+    </GridColumns>
+
+</Grid>
+@code {
+    private List<OrderCustomerModel> orderCustomerModel = new();
+    private string? customerId = "cust001";
+    private bool showEditModal = false;
+    private bool showCreateModal = false;
+    private string? successMessage;
+    private string? errorMessage;
+    protected override async Task OnInitializedAsync()
+    {
+        orderCustomerModel = await orderCustomerService.GetOrderCustomerAsync(customerId);
+    }
+
+    private void OnRowClick(GridRowEventArgs<OrderCustomerModel> args)
+    {
+        var orderId = args.Item.OrderId;
+        Navigation.NavigateTo($"/orderDetailView/{orderId}");
+    }
+    private async Task Cancel(string orderId)
+    {
+        try
+        {
+            await orderCustomerService.CancelOrderAsync(orderId);
+            orderCustomerModel = await orderCustomerService.GetOrderCustomerAsync(customerId);
+            await ShowMessage("✅ Hủy đơn hàng thành công!", true);
+        }
+        catch (Exception)
+        {
+            await ShowMessage($"❌ Lỗi không thể hủy đơn hàng", false);
+        }
+    }
+
+    private async Task ShowMessage(string message, bool isSuccess)
+    {
+        if (isSuccess)
+        {
+            successMessage = message;
+            errorMessage = null;
+        }
+        else
+        {
+            errorMessage = message;
+            successMessage = null;
+        }
+
+        StateHasChanged();
+        await Task.Delay(3000);
+        successMessage = null;
+        errorMessage = null;
+        StateHasChanged();
+    }
+
+}

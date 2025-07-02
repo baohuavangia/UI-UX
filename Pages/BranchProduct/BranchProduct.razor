@@ -6,9 +6,9 @@
 
 <h3>BranchProduct</h3>
 
-<Grid TItem="BranchProductDto"
+<Grid TItem="BranchProductModel"
       Class="table table-hover table-bordered table-striped shadow rounded"
-      Data="@branchProductDtos"
+      Data="@branchProductModels"
       AllowPaging="true"
       PageSize="5"
       AllowRowClick="true"
@@ -19,25 +19,25 @@
       Responsive="true">
 
     <GridColumns>
-        <GridColumn TItem="BranchProductDto" HeaderText="Mã sản phẩm" PropertyName="ProductId" SortKeySelector="item => item.ProductId">@context.ProductId</GridColumn>
-        <GridColumn TItem="BranchProductDto" HeaderText="Tên sản phẩm" PropertyName="ProductName" SortKeySelector="item => item.ProductName">@context.ProductName</GridColumn>
-        <GridColumn TItem="BranchProductDto" HeaderText="Mô tả" Filterable="false">@context.Description</GridColumn>
-        <GridColumn TItem="BranchProductDto" HeaderText="Ảnh" Filterable="false" width="40%">
+        <GridColumn TItem="BranchProductModel" HeaderText="Mã sản phẩm" PropertyName="ProductId" SortKeySelector="item => item.ProductId">@context.ProductId</GridColumn>
+        <GridColumn TItem="BranchProductModel" HeaderText="Tên sản phẩm" PropertyName="ProductName" SortKeySelector="item => item.ProductName">@context.ProductName</GridColumn>
+        <GridColumn TItem="BranchProductModel" HeaderText="Mô tả" Filterable="false">@context.Description</GridColumn>
+        <GridColumn TItem="BranchProductModel" HeaderText="Ảnh" Filterable="false" width="40%">
             <img src="@context.Image" width="100px" alt="@context.ProductName" />
         </GridColumn>
     </GridColumns>
 </Grid>
 
 @code {
-    private List<BranchProductDto> branchProductDtos = new();
+    private List<BranchProductModel> branchProductModels = new();
     private string? branchId = "1";
 
     protected override async Task OnInitializedAsync()
     {
-        branchProductDtos = await branchProductService.GetBranchProduct(branchId);
+        branchProductModels = await branchProductService.GetBranchProduct(branchId);
     }
 
-    private void OnRowClick(GridRowEventArgs<BranchProductDto> args)
+    private void OnRowClick(GridRowEventArgs<BranchProductModel> args)
     {
         var productId = args.Item.ProductId;
         Navigation.NavigateTo($"/branchproduct/{productId}");

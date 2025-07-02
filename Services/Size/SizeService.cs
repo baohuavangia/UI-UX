@@ -14,14 +14,14 @@ namespace MenShopUI.Services.Size
             _httpClient = httpClient;
         }
 
-        public async Task<List<SizeDto>> GetSizeAsync()
+        public async Task<List<SizeModel>> GetSizeAsync()
         {
-            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<SizeDto>>>($"{ApiUrl.BaseUrl}api/size");
+            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<SizeModel>>>($"{ApiUrl.BaseUrl}api/size");
 
-            return response?.Data ?? new List<SizeDto>();
+            return response?.Data ?? new List<SizeModel>();
         }
 
-        public async Task AddSize(SizeDto sizeDto)
+        public async Task AddSize(SizeModel sizeDto)
         {
             var response = await _httpClient.PostAsJsonAsync($"{ApiUrl.BaseUrl}api/size", sizeDto);
 
@@ -32,7 +32,7 @@ namespace MenShopUI.Services.Size
             }
         }
 
-        public async Task UpdateSize(SizeDto sizeDto)
+        public async Task UpdateSize(SizeModel sizeDto)
         {
             var response = await _httpClient.PutAsJsonAsync($"{ApiUrl.BaseUrl}api/size/{sizeDto.SizeId}", sizeDto);
 

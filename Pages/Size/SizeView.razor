@@ -21,9 +21,9 @@
     </button>
 </div>
 
-<Grid TItem="SizeDto"
+<Grid TItem="SizeModel"
       Class="table table-hover table-bordered"
-      Data="@fabrics"
+      Data="@sizeModels"
       AllowFiltering="true"
       AllowSorting="true"
       AllowPaging="true"
@@ -35,15 +35,15 @@
       ShowToolbar="true">
 
     <GridColumns>
-        <GridColumn TItem="SizeDto" HeaderText="ID" PropertyName="ColorId"
+        <GridColumn TItem="SizeModel" HeaderText="ID" PropertyName="ColorId"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             @context.SizeId
         </GridColumn>
-        <GridColumn TItem="SizeDto" HeaderText="Tên kích cỡ" PropertyName="Name"
+        <GridColumn TItem="SizeModel" HeaderText="Tên kích cỡ" PropertyName="Name"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             @context.Name
         </GridColumn>
-        <GridColumn TItem="SizeDto" HeaderText="Hành động"
+        <GridColumn TItem="SizeModel" HeaderText="Hành động"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             <button class="btn btn-warning btn-sm me-1" @onclick="() => StartEdit(context.SizeId, context.Name)">
                 <Icon Name="IconName.PencilSquare" /> Edit
@@ -91,7 +91,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Tên màu</label>
-                        <input class="form-control" @bind="newFabric.Name" />
+                        <input class="form-control" @bind="newSize.Name" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -105,8 +105,8 @@
 
 
 @code {
-    private List<SizeDto> fabrics = new();
-    private SizeDto newFabric = new();
+    private List<SizeModel> sizeModels = new();
+    private SizeModel newSize = new();
     private string? successMessage;
     private string? errorMessage;
 
@@ -119,7 +119,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        fabrics = await sizeService.GetSizeAsync();
+        sizeModels = await sizeService.GetSizeAsync();
     }
 
     private void StartEdit(int colorId, string currentName)
@@ -144,12 +144,12 @@
 
     private async Task AddFabric()
     {
-        if (!string.IsNullOrWhiteSpace(newFabric.Name))
+        if (!string.IsNullOrWhiteSpace(newSize.Name))
         {
             try
             {
-                await sizeService.AddSize(newFabric);
-                newFabric = new SizeDto(); // Reset
+                await sizeService.AddSize(newSize);
+                newSize = new SizeModel();
                 CloseModal();
                 await ShowMessage("✅ Thêm màu thành công!", true);
             }
@@ -162,7 +162,7 @@
         {
             await ShowMessage("❌ Vui lòng nhập tên màu!", false);
         }
-        fabrics = await sizeService.GetSizeAsync();
+        sizeModels = await sizeService.GetSizeAsync();
     }
 
     private async Task SaveUpdate(int colorId)
@@ -171,14 +171,14 @@
         {
             try
             {
-                var colorToUpdate = new SizeDto
+                var colorToUpdate = new SizeModel
                 {
                     SizeId = colorId,
                     Name = editColorName.Trim()
                 };
 
                 await sizeService.UpdateSize(colorToUpdate);
-                fabrics = await sizeService.GetSizeAsync();
+                sizeModels = await sizeService.GetSizeAsync();
 
                 showEditModal = false;
                 editingColorId = null;
@@ -202,7 +202,7 @@
         try
         {
             await sizeService.DeleteSize(Id);
-            fabrics = await sizeService.GetSizeAsync();
+            sizeModels = await sizeService.GetSizeAsync();
             await ShowMessage("✅ Xóa màu thành công!", true);
         }
         catch (Exception)

@@ -5,9 +5,9 @@ namespace MenShopUI.Services.Color
 {
     public interface IColorService
     {
-        public Task<List<ColorDto>> GetColorDtos();
-        public Task AddColor(ColorDto colorDto);
-        public Task UpdateColor(ColorDto colorDto);
+        public Task<List<ColorModel>> GetColorDtos();
+        public Task AddColor(ColorModel colorDto);
+        public Task UpdateColor(ColorModel colorDto);
 
        Task<bool> DeleteColor(int Id);
     }

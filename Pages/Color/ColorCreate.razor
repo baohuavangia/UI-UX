@@ -27,7 +27,7 @@
 @code {
     private string? successMessage;
     private string? errorMessage;
-    private ColorDto newColor = new();
+    private ColorModel newColor = new();
     private async Task AddColor()
     {
         if (!string.IsNullOrWhiteSpace(newColor.Name))
@@ -35,7 +35,7 @@
             try
             {
                 await colorService.AddColor(newColor);
-                newColor = new ColorDto(); // Reset
+                newColor = new ColorModel(); // Reset
                 await ShowMessage("✅ Thêm màu thành công!", true);
 
             }

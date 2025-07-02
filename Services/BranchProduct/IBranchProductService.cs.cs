@@ -4,8 +4,8 @@ namespace MenShopUI.Services.BranchProduct
 {
     public interface IBranchProductService
     {
-        public Task<List<BranchProductDto>> GetBranchProduct(string branchId);
+        public Task<List<BranchProductModel>> GetBranchProduct(string branchId);
 
-        public Task<List<BranchProductDetailDto>> GetBranchProductDetail(string branchid, string productid);
+        public Task<List<BranchProductDetailModel>> GetBranchProductDetail(string branchid, string productid);
     }
 }

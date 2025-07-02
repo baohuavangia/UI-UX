@@ -21,7 +21,7 @@
     </button>
 </div>
 
-<Grid TItem="FabricDto"
+<Grid TItem="FabricModel"
       Class="table table-hover table-bordered"
       Data="@fabrics"
       AllowFiltering="true"
@@ -35,15 +35,15 @@
       ShowToolbar="true">
 
     <GridColumns>
-        <GridColumn TItem="FabricDto" HeaderText="ID" PropertyName="ColorId"
+        <GridColumn TItem="FabricModel" HeaderText="ID" PropertyName="ColorId"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             @context.FabricId
         </GridColumn>
-        <GridColumn TItem="FabricDto" HeaderText="Tên chất liệu" PropertyName="Name"
+        <GridColumn TItem="FabricModel" HeaderText="Tên chất liệu" PropertyName="Name"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             @context.Name
         </GridColumn>
-        <GridColumn TItem="FabricDto" HeaderText="Hành động"
+        <GridColumn TItem="FabricModel" HeaderText="Hành động"
                     HeaderTextAlignment="Alignment.Center" TextAlignment="Alignment.Center">
             <button class="btn btn-warning btn-sm me-1" @onclick="() => StartEdit(context.FabricId, context.Name)">
                 <Icon Name="IconName.PencilSquare" /> Edit
@@ -105,8 +105,8 @@
 
 
 @code {
-    private List<FabricDto> fabrics = new();
-    private FabricDto newFabric = new();
+    private List<FabricModel> fabrics = new();
+    private FabricModel newFabric = new();
     private string? successMessage;
     private string? errorMessage;
 
@@ -149,7 +149,7 @@
             try
             {
                 await fabricService.AddFabric(newFabric);
-                newFabric = new FabricDto(); // Reset
+                newFabric = new FabricModel(); // Reset
                 CloseModal();
                 await ShowMessage("✅ Thêm chất liệu thành công!", true);
             }
@@ -171,7 +171,7 @@
         {
             try
             {
-                var colorToUpdate = new FabricDto
+                var colorToUpdate = new FabricModel
                 {
                     FabricId = colorId,
                     Name = editColorName.Trim()

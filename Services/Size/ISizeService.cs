@@ -5,10 +5,10 @@ namespace MenShopUI.Services.Size
 {
     public interface ISizeService
     {
-        public Task<List<SizeDto>> GetSizeAsync();
+        public Task<List<SizeModel>> GetSizeAsync();
 
-        public Task AddSize(SizeDto size);
-        public Task UpdateSize(SizeDto sizeDto);
+        public Task AddSize(SizeModel size);
+        public Task UpdateSize(SizeModel sizeDto);
 
         public Task<bool> DeleteSize(int Id);
     }

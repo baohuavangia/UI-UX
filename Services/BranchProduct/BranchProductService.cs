@@ -14,22 +14,22 @@ namespace MenShopUI.Services.BranchProduct
             _httpClient = httpClient;
         }
 
-        public async Task<List<BranchProductDto>> GetBranchProduct(string branchId)
+        public async Task<List<BranchProductModel>> GetBranchProduct(string branchId)
         {
-            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<BranchProductDto>>>(
+            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<BranchProductModel>>>(
                 $"{ApiUrl.BaseUrl}api/branch/{branchId}/products"
             );
 
-            return response?.Data ?? new List<BranchProductDto>();
+            return response?.Data ?? new List<BranchProductModel>();
         }
 
-        public async Task<List<BranchProductDetailDto>> GetBranchProductDetail(string branchId, string productId)
+        public async Task<List<BranchProductDetailModel>> GetBranchProductDetail(string branchId, string productId)
         {
-            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<BranchProductDetailDto>>>(
+            var response = await _httpClient.GetFromJsonAsync<ApiResponseModel<List<BranchProductDetailModel>>>(
                 $"{ApiUrl.BaseUrl}api/branch/{branchId}/products/{productId}/details"
             );
 
-            return response?.Data ?? new List<BranchProductDetailDto>();
+            return response?.Data ?? new List<BranchProductDetailModel>();
         }
     }
 }
